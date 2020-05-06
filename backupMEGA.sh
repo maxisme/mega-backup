@@ -70,7 +70,7 @@ zip --password "$encr_key" -rj "$encr_path" "$localfolder"
 #CHECK ENOUGH STORAGE LEFT ON MEGA
 
 #check size of local folder
-upload_size=$(du -sm "$encrypted_dir" | awk '{print \$1}')
+upload_size=$(du -sm "$encrypted_dir" | awk '{print $1}')
 
 #check how much space is left mega
 mega_space_left=$(megadf --mb --free -u $user -p $pass)
