@@ -40,7 +40,7 @@ while getopts ":l:r:e:u:" opt; do
   esac
 done
 
-if [ ! -z "$localfolder" ] && [ ! -z "`$remotefolder`" ]; then
+if [ ! -z "$localfolder" ] && [ ! -z "$remotefolder" ]; then
   file_name=$(basename "$localfolder")
 
   timed=$(date +"%Y%m%d%H%M%S")
