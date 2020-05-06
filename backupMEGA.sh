@@ -50,7 +50,7 @@ if [ ! -z "$localfolder" ] && [ ! -z "$remotefolder" ]; then
 
   user=$(<$USERNAME_PATH)
   pass=$(<$PASSWORD_PATH)
-  if [ -z "$user" ] || [ ! -z "$pass" ]; then
+  if [ -z "$user" ] || [ -z "$pass" ]; then
     echo "no username ($user) or password ($pass) in $USERNAME_PATH or $PASSWORD_PATH"
     exit
   fi
