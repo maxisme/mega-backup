@@ -7,7 +7,7 @@ dir="$(pwd)"
 USERNAME_PATH="$dir/.username"
 PASSWORD_PATH="$dir/.password"
 
-localfolder=""$()
+localfolder=""
 remotefolder=""
 u="virgin"
 encr_key="aYYBtbm629P8d6VmMKy4yFMC4BTsSDsctOtS4vImebAaAN2WIwcoNt8AfFL1P5A4G0BY57mQVLacrYM3"
