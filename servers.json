@@ -14,7 +14,7 @@
       ]
     }
   },
-  "global-backup-dir": "~/Desktop/",
+  "global-backup-dir": "/4TB/",
   "global-exclude-dirs": [
     "/dev/*",
     "/proc/*",

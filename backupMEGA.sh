@@ -2,7 +2,7 @@
 # mega deletes 35000 after 30 days so remove that
 SIZE_PERM=35000
 TMP_STORAGE="/tmp/mega-crypt/"
-FILE_EXT=".zip"
+FILE_EXT=".maxcrypt"
 dir="$(pwd)"
 USERNAME_PATH="$dir/.username"
 PASSWORD_PATH="$dir/.password"
