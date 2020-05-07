@@ -62,7 +62,7 @@ fi
 #make tmp directory for encrypted and compressed file
 mkdir -p "$encrypted_dir"
 
-tar --xattrs -czpvf - "$localfolder" | openssl enc -aes-256-cbc -a -salt -pass pass:"$encr_key" -out "$encr_path"
+tar --xattrs -czpf - "$localfolder" | openssl enc -aes-256-cbc -a -salt -pass pass:"$encr_key" -out "$encr_path"
 ### TO DECRYPT FILE ###
 # openssl enc -aes-256-cbc -a -d -salt -pass pass:"$encr_key" -in $encr_path | tar --xattrs -zxpf -
 
