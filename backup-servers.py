@@ -5,6 +5,7 @@ import asyncio
 
 BASIC_RSYNC_CMDS = ["rsync", "-aAX", "--numeric-ids", "--delete", "--info=progress2"]
 
+
 async def backup(rsync_cmd, local_dir, remote_dir):
     t = time.time()
     subprocess.call(["mkdir", "-p", local_dir])
@@ -14,7 +15,6 @@ async def backup(rsync_cmd, local_dir, remote_dir):
 
 
 if __name__ == "__main__":
-
     with open('servers.json') as json_file:
         s = json.load(json_file)
         backup_dir = s['global-backup-dir']
@@ -40,7 +40,3 @@ if __name__ == "__main__":
 
             # mkdir cmd
             asyncio.run(backup(rsync_cmd, local_dir, remote_dir=server))
-
-        loop = asyncio.get_event_loop()
-        pending = asyncio.all_tasks()
-        loop.run_until_complete(asyncio.gather(*pending))
