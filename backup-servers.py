@@ -3,6 +3,7 @@ import subprocess
 import time
 import asyncio
 
+BASIC_RSYNC_CMDS = ["rsync", "-aAX", "--numeric-ids", "--delete", "--info=progress2"]
 
 async def backup(rsync_cmd, local_dir, remote_dir):
     t = time.time()
@@ -13,7 +14,6 @@ async def backup(rsync_cmd, local_dir, remote_dir):
 
 
 if __name__ == "__main__":
-    basic_rsync_cmds = ["rsync", "-aAXv", "--numeric-ids", "--delete", "--info=progress2"]
 
     with open('servers.json') as json_file:
         s = json.load(json_file)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
             local_dir = f"{backup_dir}{server}/"
 
             exclude_dirs = global_exclude_dirs.copy()
-            rsync_cmd = basic_rsync_cmds.copy()
+            rsync_cmd = BASIC_RSYNC_CMDS.copy()
 
             # fetch all excluded directories
             exclude_dirs += s["servers"][server]["exclude-dirs"]
