@@ -8,6 +8,7 @@ BASIC_RSYNC_CMDS = ["rsync", "-aAX", "--numeric-ids", "--delete", "--info=progre
 
 def backup(rsync_cmd, local_dir, remote_dir):
     t = time.time()
+    print(f"started backing up {remote_dir}")
     subprocess.call(["mkdir", "-p", local_dir])
     subprocess.call(rsync_cmd)
     subprocess.call(["bash", "backup-directory.sh", "-l", local_dir, "-r", remote_dir])
