@@ -1,4 +1,4 @@
-import thread
+import threading
 import json
 import subprocess
 import time
@@ -38,4 +38,5 @@ if __name__ == "__main__":
             # add destination rsync cmd
             rsync_cmd += ["-e", f"ssh -p {port}", f"{host}:/", local_dir]
 
-            thread.start_new_thread(backup, rsync_cmd, local_dir, server)
+            x = threading.Thread(target=backup, args=(rsync_cmd, local_dir, server))
+            x.start()
