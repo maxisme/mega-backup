@@ -4,8 +4,7 @@ import time
 import asyncio
 
 
-@asyncio.coroutine
-def backup(rsync_cmd, local_dir, remote_dir):
+async def backup(rsync_cmd, local_dir, remote_dir):
     t = time.time()
     subprocess.call(["mkdir", "-p", local_dir])
     subprocess.call(rsync_cmd)
