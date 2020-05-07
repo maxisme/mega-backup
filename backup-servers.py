@@ -4,6 +4,7 @@ import time
 import asyncio
 
 BASIC_RSYNC_CMDS = ["rsync", "-aAX", "--numeric-ids", "--delete", "--info=progress2"]
+event_loop = asyncio.get_event_loop()
 
 
 async def backup(rsync_cmd, local_dir, remote_dir):
@@ -38,5 +39,5 @@ if __name__ == "__main__":
             # add destination rsync cmd
             rsync_cmd += ["-e", f"ssh -p {port}", f"{host}:/", local_dir]
 
-            # mkdir cmd
-            asyncio.run(backup(rsync_cmd, local_dir, remote_dir=server))
+
+            asyncio.ensure_future(backup(rsync_cmd, local_dir, remote_dir=server), loop=event_loop)
