@@ -62,7 +62,6 @@ fi
 #make tmp directory for encrypted and compressed file
 mkdir -p "$encrypted_dir"
 
-#zip --password "$encr_key" -rj "$encr_path" "$localfolder"
 tar --xattrs -czpvf - "$localfolder" | openssl enc -aes-256-cbc -a -salt -pass pass:"$encr_key" -out "$encr_path"
 ### TO DECRYPT FILE ###
 # openssl enc -aes-256-cbc -a -d -salt -pass pass:"$encr_key" -in $encr_path | tar --xattrs -zxpf -
@@ -86,10 +85,23 @@ if (($left < "0")) && (($upload_size > "0")); then
   curl -d "credentials=9NlUA9Wq8J58ONeDbgGbV7Rej" \
     -d "title=Creating new mega account (virgin) - ${left}mb left" \
     https://notifi.it/api
-  json=$(curl --data "credentials=GUIGQ31rtwbJIGYS5Jt3syhDxBhYH8uije5WEnnVr2vcBWCfZBAwLRJPLraDDAUfEtQ6gBY5TMkdH6Cl" http://ns1.maxdns.info:8980/code)
-  echo $json | jq -r '.password' > $PASSWORD_PATH
-  echo $json | jq -r '.email' > $USERNAME_PATH
-  sleep 10
+
+  json=$(curl --connect-timeout 25 --data "credentials=GUIGQ31rtwbJIGYS5Jt3syhDxBhYH8uije5WEnnVr2vcBWCfZBAwLRJPLraDDAUfEtQ6gBY5TMkdH6Cl" http://idmy.team:8980/code)
+  pass=$(echo $json | jq -r '.password')
+  user=$(echo $json | jq -r '.email')
+  if [ -z "$user" ] || [ -z "$pass" ]; then
+    curl -d "credentials=9NlUA9Wq8J58ONeDbgGbV7Rej" \
+    -d "title=Major error creating new mega account" \
+    https://notifi.it/api
+    curl -d "credentials=feAMyJTxCL0gyMZ0Ps1oxjHAa" \
+    -d "title=Major error creating new mega account" \
+    https://notifi.it/api
+    exit 1
+  fi
+  echo $pass > $PASSWORD_PATH
+  echo $user > $USERNAME_PATH
+
+  sleep 10 # to slow down potential infinite loops
   $dir/backupMEGA.sh "$localfolder" "$remotefolder"
   exit
 fi
