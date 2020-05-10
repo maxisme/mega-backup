@@ -1,21 +1,7 @@
 {
-  "servers": {
-    "chapel": {
-      "host": "root@idmy.team",
-      "ssh-port": 22,
-      "exclude-dirs": []
-    },
-    "lb": {
-      "host": "root@north.casa",
-      "ssh-port": 22,
-      "exclude-dirs": [
-        "/RAID/*",
-        "/NAS/*"
-      ]
-    }
-  },
-  "global-backup-dir": "/4TB/",
-  "global-exclude-dirs": [
+  "servers": {},
+  "backup-dir": "/backup/",
+  "exclude-dirs": [
     "/dev/*",
     "/proc/*",
     "/sys/*",

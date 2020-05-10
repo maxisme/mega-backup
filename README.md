@@ -1,10 +1,12 @@
 # mega-backup
 
+## Setup
 1. Add cron job to your liking:
     ```
     */20 * * * * python backup-servers.py
     0 * * * * backup-servers.sh
     ```
+    
 2. Add servers to backup in the `servers.json`:
     ```json
     {
@@ -15,8 +17,8 @@
           "exclude-dirs": []
         }
       },
-      "global-backup-dir": "/backup/",
-      "global-exclude-dirs": [
+      "backup-dir": "/backup/",
+      "exclude-dirs": [
         "/dev/*",
         "/proc/*",
         "/sys/*",
@@ -25,8 +27,15 @@
         "/mnt/*",
         "/media/*",
         "/lost+found/*",
-        "/var/log/*"
+        "/var/log/*",
+        "/var/lib/docker/*"
       ]
     }
 
     ```
+   
+## Decrypting backup
+To decrypt backup simply run inside the `cmd` directory:
+```
+$ go run . /path/to/file key
+```
