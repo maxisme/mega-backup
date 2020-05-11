@@ -17,6 +17,6 @@ RUN make install
 RUN rm -rf megatools*
 
 WORKDIR /app
-ADD servers.json /app/servers.json
+COPY . /app/
 COPY --from=builder /app/app /app/app
 CMD ["/app/app"]
