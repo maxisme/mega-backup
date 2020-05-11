@@ -9,5 +9,7 @@ RUN bash megatools-$mega_version/configure --disable-docs
 RUN make -j4
 RUN make install
 
+
 # cleanup
+RUN apk del build-base libcurl curl-dev openssl-dev glib-dev glib libtool automake autoconf
 RUN rm -rf megatools*
