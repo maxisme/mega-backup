@@ -7,47 +7,55 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"sync"
 	"time"
 )
 
 // BackupServers will backup the servers from the file in the config
-func BackupServers(servers Servers, MCServer CreateServer) error {
-	//wg := sync.WaitGroup{}
+func BackupServers(servers Servers, MCServer CreateServer) {
+	var wg sync.WaitGroup
+	wg.Add(len(servers.Servers))
 	for name, config := range servers.Servers {
-		log.Printf("Started backup of %s\n", name)
+		go func(servers Servers, name string, config Server) {
+			defer wg.Done()
+			log.Printf("Started backup of %s\n", name)
 
-		start := time.Now()
-		// create directory to backup servers to
-		localBackupDir := fmt.Sprintf("%s/%s/", servers.BackupDir, name)
-		err := os.MkdirAll(localBackupDir, os.ModePerm)
-		if err != nil {
-			return err
-		}
+			start := time.Now()
+			// create directory to backup servers to
+			localBackupDir := fmt.Sprintf("%s/%s/", servers.BackupDir, name)
+			err := os.MkdirAll(localBackupDir, os.ModePerm)
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
 
-		// rsync contents of Server to directory
-		args := getRsyncCmds(config, servers.ExcludeDirs, localBackupDir)
-		log.Printf("running: rsync %v\n", args)
-		cmd := exec.Command("rsync", args...)
-		var stderr bytes.Buffer
-		cmd.Stderr = &stderr
-		err = cmd.Run()
-		if err != nil {
-			fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-			//return err
-		}
+			// rsync contents of Server to directory
+			args := getRsyncCmds(config, servers.ExcludeDirs, localBackupDir)
+			log.Printf("running: rsync %v\n", args)
+			cmd := exec.Command("rsync", args...)
+			var stderr bytes.Buffer
+			cmd.Stderr = &stderr
+			err = cmd.Run()
+			if err != nil {
+				log.Println(fmt.Sprint(err) + ": " + stderr.String())
+				//return err
+			}
 
-		// backup directory to mega
-		account, err := MCServer.getStoredAccount()
-		if err != nil {
-			return err
-		}
-		link, err := MCServer.BackupDirectory(localBackupDir, name, servers.Key, account)
-		if err != nil {
-			return err
-		}
-		log.Printf("Backed up %s to %s in %d seconds\n", name, link, time.Since(start))
+			// backup directory to mega
+			account, err := MCServer.getStoredAccount()
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
+			link, err := MCServer.BackupDirectory(localBackupDir, name, servers.Key, account)
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
+			log.Printf("Backed up %s to %s in %s seconds\n", name, link, time.Since(start))
+		}(servers, name, config)
 	}
-	return nil
+	wg.Wait()
 }
 
 func getRsyncCmds(server Server, excludeDirs []string, backupDir string) []string {

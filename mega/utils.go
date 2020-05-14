@@ -22,6 +22,9 @@ func Hash(key string) string {
 }
 
 func Encrypt(data []byte, key string) ([]byte, error) {
+	if key == "" {
+		panic("must enter key")
+	}
 	block, _ := aes.NewCipher([]byte(Hash(key)))
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
@@ -58,7 +61,7 @@ func Tar(src string, writer io.Writer) error {
 		return fmt.Errorf("Unable to tar files - %v", err.Error())
 	}
 
-	gzw := gzip.NewWriter(writer)
+	gzw, _ := gzip.NewWriterLevel(writer, gzip.BestSpeed)
 	defer gzw.Close()
 
 	tw := tar.NewWriter(gzw)

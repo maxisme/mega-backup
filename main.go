@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/maxisme/mega-backup/mega"
 	"github.com/robfig/cron/v3"
 	"io/ioutil"
+	"log"
 	"os"
 	"sync"
 )
@@ -37,20 +37,16 @@ func main() {
 				panic(err)
 			}
 
-			err = mega.BackupServers(servers, mega.CreateServer{
+			mega.BackupServers(servers, mega.CreateServer{
 				Host:        os.Getenv("HOST"),
 				Credentials: os.Getenv("CREDENTIALS"),
 			})
-			if err != nil {
-				fmt.Println(err)
-				panic(err)
-			}
 
 			mutex.Lock()
 			isBackingUp = false
 			mutex.Unlock()
 		} else {
-			fmt.Println("Already backing up")
+			log.Println("Already backing up")
 		}
 	})
 	if err != nil {
@@ -67,5 +63,8 @@ func FileToServers(path string) (servers mega.Servers, err error) {
 		return
 	}
 	err = json.Unmarshal(bytes, &servers)
+	if servers.Key == "" {
+		panic("missing key in servers.json")
+	}
 	return
 }

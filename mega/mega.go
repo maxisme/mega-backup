@@ -91,7 +91,7 @@ func (server CreateServer) BackupDirectory(dir, name, key string, account Accoun
 		}
 	}
 
-	log.Printf("Uploading %d with space left %d", fileSize, AccountCap-used)
+	log.Printf("Uploading %d bytes with %d bytes left ", fileSize, AccountCap-used)
 
 	err = m.SetUploadWorkers(4)
 	if err != nil {

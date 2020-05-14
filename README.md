@@ -29,9 +29,9 @@
         "/lost+found/*",
         "/var/log/*",
         "/var/lib/docker/*"
-      ]
+      ],
+      "encryption-key": "CHANGE ME"
     }
-
     ```
    
 ## Decrypting backup

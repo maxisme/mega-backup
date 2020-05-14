@@ -5,6 +5,7 @@ services:
     environment:
       - HOST=${HOST:?err}
       - CREDENTIALS=${CREDENTIALS:?err}
+      #- CRON=0 */12 * * *
     volumes:
       - "./servers.json:/app/servers.json"
       - "/root/.ssh:/root/.ssh"
