@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const BackupDir = "/backup/"
+
 // BackupServers will backup the servers from the file in the config
 func BackupServers(servers Servers, MCServer CreateServer) {
 	var wg sync.WaitGroup
@@ -22,7 +24,7 @@ func BackupServers(servers Servers, MCServer CreateServer) {
 
 			start := time.Now()
 			// create directory to backup servers to
-			localBackupDir := fmt.Sprintf("%s/%s/", servers.BackupDir, name)
+			localBackupDir := fmt.Sprintf("%s/%s/", BackupDir, name)
 			err := os.MkdirAll(localBackupDir, os.ModePerm)
 			if err != nil {
 				log.Println(err.Error())
@@ -38,7 +40,6 @@ func BackupServers(servers Servers, MCServer CreateServer) {
 			err = cmd.Run()
 			if err != nil {
 				log.Println(fmt.Sprint(err) + ": " + stderr.String())
-				//return err
 			}
 
 			// backup directory to mega

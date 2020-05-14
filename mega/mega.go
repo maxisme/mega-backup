@@ -30,7 +30,6 @@ type Server struct {
 
 type Servers struct {
 	Servers     map[string]Server `json:"servers"`
-	BackupDir   string            `json:"backup-dir"`
 	TmpDir      string            `json:"tmp-dir"`
 	ExcludeDirs []string          `json:"exclude-dirs"`
 	Key         string            `json:"encryption-key"`

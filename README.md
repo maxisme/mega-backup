@@ -17,7 +17,6 @@
           "exclude-dirs": []
         }
       },
-      "backup-dir": "/backup/",
       "exclude-dirs": [
         "/dev/*",
         "/proc/*",
@@ -32,6 +31,21 @@
       ],
       "encryption-key": "CHANGE ME"
     }
+    ```
+3. An example docker-compose.yml may look like this:
+    ```yaml
+    version: '3.1'
+    services:
+      backup:
+        build: .
+        environment:
+          - HOST=${HOST:?err}
+          - CREDENTIALS=${CREDENTIALS:?err}
+          - CRON=0 */12 * * *
+        volumes:
+          - "./servers.json:/app/servers.json"
+          - "/root/.ssh:/root/.ssh"
+          - "./backup/:/backup/"
     ```
    
 ## Decrypting backup
