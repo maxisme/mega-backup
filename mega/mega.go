@@ -65,6 +65,9 @@ func (server CreateServer) BackupDirectory(dir, name, key string, account Accoun
 
 	m := MEGA.New()
 	if err := m.Login(account.Email, account.Password); err != nil {
+		log.Printf("Failed to log in with: %v\n", account)
+		log.Printf("Deleting: %v\n", AccountPath)
+		_ = os.Remove(AccountPath)
 		return "", err
 	}
 
