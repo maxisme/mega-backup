@@ -1,0 +1,25 @@
+name: push
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "megatools/**"
+
+jobs:
+  publish:
+    name: Publish Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: '0'
+      - name: Publish to Docker Registry
+        uses: docker/build-push-action@v1
+        with:
+          repository: maxisme/megatools-alpine
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          path: ${{ github.workspace }}/megatools/
+          tag_with_ref: true
+          tag_with_sha: true
