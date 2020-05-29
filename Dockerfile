@@ -3,6 +3,8 @@ COPY . /app/
 WORKDIR /app
 RUN go build -o app
 
+# --
+
 FROM maxisme/megatools-alpine
 RUN apk add --update rsync openssh
 
