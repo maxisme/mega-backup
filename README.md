@@ -14,7 +14,12 @@
         "server-name": {
           "host": "root@1.2.3.4",
           "ssh-port": 22,
+<<<<<<< HEAD
           "exclude-dirs": []
+=======
+          "exclude-dirs": [],
+          "mega": true
+>>>>>>> a01344162fc3824600d92d18f55a24bfdc0ab114
         }
       },
       "exclude-dirs": [

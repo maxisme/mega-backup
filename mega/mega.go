@@ -25,6 +25,7 @@ const (
 type Server struct {
 	Host        string   `json:"host"`
 	Port        int      `json:"ssh-port"`
+	ToMega      bool     `json:"mega"`
 	ExcludeDirs []string `json:"exclude-dirs"`
 }
 

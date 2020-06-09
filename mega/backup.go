@@ -42,18 +42,23 @@ func BackupServers(servers Servers, MCServer CreateServer) {
 				log.Println(fmt.Sprint(err) + ": " + stderr.String())
 			}
 
-			// backup directory to mega
-			account, err := MCServer.getStoredAccount()
-			if err != nil {
-				log.Println(err.Error())
-				return
+			if config.ToMega {
+				log.Println("Uploading to MEGA")
+				// backup directory to mega
+				account, err := MCServer.getStoredAccount()
+				if err != nil {
+					log.Println(err.Error())
+					return
+				}
+				link, err := MCServer.BackupDirectory(localBackupDir, name, servers.Key, account)
+				if err != nil {
+					log.Println(err.Error())
+					return
+				}
+				log.Printf("Backed up %s to %s in %s seconds\n", name, link, time.Since(start))
+			} else {
+				log.Printf("Backed up %s in %s seconds\n", name, time.Since(start))
 			}
-			link, err := MCServer.BackupDirectory(localBackupDir, name, servers.Key, account)
-			if err != nil {
-				log.Println(err.Error())
-				return
-			}
-			log.Printf("Backed up %s to %s in %s seconds\n", name, link, time.Since(start))
 		}(servers, name, config)
 	}
 	wg.Wait()

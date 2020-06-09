@@ -1,3 +1,4 @@
 .megaccount
 .env
 servers.json
+mega_test.go
