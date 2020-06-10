@@ -103,7 +103,8 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 				c := exec.Command("rclone", "copy", compressedDirPath, server.RcloneDest)
 				log.Println("Running: " + c.String())
 				out, err := c.CombinedOutput()
-				log.Printf("%s %s", out, err)
+				log.Printf("rclone out: %v %v", out, err)
+				_ = os.Remove(compressedDirPath)
 			}
 
 			if !server.PersistDirectory {
