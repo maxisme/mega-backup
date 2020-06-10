@@ -2,3 +2,4 @@
 .env
 servers.json
 mega_test.go
+docker-compose.yml

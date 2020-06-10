@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/maxisme/mega-backup/mega"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,7 +17,7 @@ func main() {
 	key := os.Args[2]
 
 	name := strings.TrimSuffix(path, filepath.Ext(path))
-	err := mega.DecryptTar(path, name+".tar.gz", key)
+	err := backup.DecryptTar(path, name+".tar.gz", key)
 	if err != nil {
 		panic(err)
 	}

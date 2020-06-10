@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/maxisme/mega-backup/mega"
+	"fmt"
+	"github.com/maxisme/mega-backup/backup"
 	"github.com/robfig/cron/v3"
 	"io/ioutil"
 	"log"
@@ -10,11 +11,9 @@ import (
 	"sync"
 )
 
-func main() {
-	if err := mega.RequiredEnvs([]string{"HOST", "CREDENTIALS"}); err != nil {
-		panic(err)
-	}
+const minKeyLen = 50
 
+func main() {
 	spec := os.Getenv("CRON")
 	if spec == "" {
 		spec = "0 */12 * * *"
@@ -37,7 +36,7 @@ func main() {
 				panic(err)
 			}
 
-			mega.BackupServers(servers, mega.CreateServer{
+			backup.BackupServers(servers, backup.CreateServer{
 				Host:        os.Getenv("HOST"),
 				Credentials: os.Getenv("CREDENTIALS"),
 			})
@@ -57,14 +56,16 @@ func main() {
 	select {} // Keep running
 }
 
-func FileToServers(path string) (servers mega.Servers, err error) {
+func FileToServers(path string) (servers backup.ServersConfig, err error) {
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
 		return
 	}
 	err = json.Unmarshal(bytes, &servers)
-	if servers.Key == "" {
-		panic("missing key in servers.json")
+	if len(servers.Key) < minKeyLen {
+		err = fmt.Errorf("server key in config must be more than %d chars", minKeyLen)
+		return
 	}
+	log.Printf("%v", servers)
 	return
 }

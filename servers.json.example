@@ -1,12 +1,9 @@
 {
   "servers": {
     "server-name": {
-      "host": "root@1.2.3.4",
-      "ssh-port": 22,
-      "exclude-dirs": []
+      "host": "root@1.2.3.4"
     }
   },
-  "backup-dir": "/backup/",
   "exclude-dirs": [
     "/dev/*",
     "/proc/*",

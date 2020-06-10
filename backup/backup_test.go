@@ -1,4 +1,4 @@
-package mega
+package backup
 
 import (
 	"testing"

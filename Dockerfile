@@ -4,7 +4,9 @@ WORKDIR /app
 RUN go build -o app
 
 FROM maxisme/megatools-alpine
-RUN apk add --update rsync openssh
+RUN apk add --update rsync openssh curl bash unzip
+RUN curl https://rclone.org/install.sh | bash -s beta
+RUN apk del zip curl bash
 
 WORKDIR /app
 COPY . /app/

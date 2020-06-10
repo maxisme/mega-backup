@@ -1,4 +1,4 @@
-package mega
+package backup
 
 import (
 	"encoding/json"
@@ -19,21 +19,11 @@ const (
 	EncryptionFileType = ".maxcrypt"
 	// AccountPath file path of stored mega credentials
 	AccountPath = ".megaccount"
-	TmpDir      = "/tmp/"
 )
 
-type Server struct {
-	Host        string   `json:"host"`
-	Port        int      `json:"ssh-port"`
-	ToMega      bool     `json:"mega"`
-	ExcludeDirs []string `json:"exclude-dirs"`
-}
-
-type Servers struct {
-	Servers     map[string]Server `json:"servers"`
-	TmpDir      string            `json:"tmp-dir"`
-	ExcludeDirs []string          `json:"exclude-dirs"`
-	Key         string            `json:"encryption-key"`
+type Account struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type CreateServer struct {
@@ -41,18 +31,7 @@ type CreateServer struct {
 	Credentials string
 }
 
-type Account struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func (server CreateServer) BackupDirectory(dir, name, key string, account Account) (string, error) {
-	tmpPath := TmpDir + name + EncryptionFileType
-	if err := EncryptCompressDir(dir, tmpPath, key); err != nil {
-		return "", err
-	}
-	defer os.Remove(tmpPath)
-
+func (server CreateServer) BackupPathToMega(tmpPath string, account Account) (string, error) {
 	fi, err := os.Stat(tmpPath)
 	if err != nil {
 		return "", err
