@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -57,7 +58,7 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 
 			start := time.Now()
 			// create directory to backup servers to
-			backupDir := fmt.Sprintf("%s/%s/", BackupDir, name)
+			backupDir := fmt.Sprintf("%s%s/", BackupDir, name)
 			err := os.MkdirAll(backupDir, os.ModePerm)
 			if err != nil {
 				log.Println(err.Error())
@@ -76,7 +77,7 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 			}
 
 			// encrypt and compress directory
-			compressedDirPath := TmpDir + name + "_" + string(time.Now().Unix()) + EncryptionFileType
+			compressedDirPath := TmpDir + name + "_" + strconv.FormatInt(time.Now().Unix(), 10) + EncryptionFileType
 			if err := EncryptCompressDir(backupDir, compressedDirPath, servers.Key); err != nil {
 				log.Println("Error encrypting/compressing: " + err.Error())
 				return
