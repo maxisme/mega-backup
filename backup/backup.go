@@ -27,12 +27,13 @@ type Server struct {
 	ToMega           bool     `json:"mega"`         // whether to upload to mega or not
 	RcloneDest       string   `json:"rclone-dest"`  // dest:path of rclone config
 	ExcludeDirs      []string `json:"exclude-dirs"` // directories on server to not backup
+	RootDir          string   `json:"root-dir"`     // root directory to backup - useful when mounting fs to backup
 }
 
 type ServerEntry struct{ Server }
 
 func (s *ServerEntry) UnmarshalJSON(b []byte) error {
-	s.Server = Server{Port: 22, PersistDirectory: true} // default values
+	s.Server = Server{Port: 22, PersistDirectory: true, RootDir: "/"} // default values
 	return json.Unmarshal(b, &s.Server)
 }
 
@@ -124,15 +125,24 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 func getRsyncCmds(server Server, excludeDirs []string, backupDir string) []string {
 	args := []string{"-aAX", "--numeric-ids", "--delete"}
 	for _, dir := range server.ExcludeDirs {
-		args = append(args, fmt.Sprintf("--exclude=%s", dir))
+		// server excludes
+		args = append(args, fmt.Sprintf("--exclude=%s", server.RootDir+dir))
 	}
 	for _, dir := range excludeDirs {
-		args = append(args, fmt.Sprintf("--exclude=%s", dir))
+		// global excludeDirs
+		args = append(args, fmt.Sprintf("--exclude=%s", server.RootDir+dir))
 	}
 
 	// destination rsync cmds
-	args = append(args, "-e", fmt.Sprintf("ssh -p %d", server.Port))
-	args = append(args, fmt.Sprintf("%s:/", server.Host), backupDir)
+	if server.Host == "" {
+		if server.RootDir == "/" {
+			panic("You can't backup the docker container... Customise the root-dir of server if mounting")
+		}
+		args = append(args, server.RootDir, backupDir)
+	} else {
+		args = append(args, "-e", fmt.Sprintf("ssh -p %d", server.Port))
+		args = append(args, fmt.Sprintf("%s:%s", server.Host, server.RootDir), backupDir)
+	}
 
 	return args
 }
