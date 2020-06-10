@@ -124,13 +124,24 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 
 func getRsyncCmds(server Server, excludeDirs []string, backupDir string) []string {
 	args := []string{"-aAX", "--numeric-ids", "--delete"}
+
+	excludeRoot := server.RootDir
+	if excludeRoot == "/" {
+		excludeRoot = "" // removes potential double slash in path
+	} else {
+		// remove slash in directory if given - /mnt/ -> /mnt
+		if excludeRoot[len(excludeRoot)-1:] == "/" {
+			excludeRoot = excludeRoot[:len(excludeRoot)-1]
+		}
+	}
+
 	for _, dir := range server.ExcludeDirs {
 		// server excludes
-		args = append(args, fmt.Sprintf("--exclude=%s", server.RootDir+dir))
+		args = append(args, fmt.Sprintf("--exclude=%s", excludeRoot+dir))
 	}
 	for _, dir := range excludeDirs {
 		// global excludeDirs
-		args = append(args, fmt.Sprintf("--exclude=%s", server.RootDir+dir))
+		args = append(args, fmt.Sprintf("--exclude=%s", excludeRoot+dir))
 	}
 
 	// destination rsync cmds
