@@ -21,13 +21,14 @@ type RcloneConfig struct {
 }
 
 type Server struct {
-	Host             string   `json:"host"`         // destination of server
-	Port             int      `json:"ssh-port"`     // which ssh port to use [default: 22]
-	PersistDirectory bool     `json:"persist"`      // whether to keep the backed up directory after finished which will speed up future backups dramatically but take up space [default: true]
-	ToMega           bool     `json:"mega"`         // whether to upload to mega or not
-	RcloneDest       string   `json:"rclone-dest"`  // dest:path of rclone config
-	ExcludeDirs      []string `json:"exclude-dirs"` // directories on server to not backup
-	RootDir          string   `json:"root-dir"`     // root directory to backup - useful when mounting fs to backup
+	Host             string   `json:"host"`           // destination of server
+	Port             int      `json:"ssh-port"`       // which ssh port to use [default: 22]
+	PersistDirectory bool     `json:"persist"`        // whether to keep the backed up directory after finished which will speed up future backups dramatically but take up space [default: true]
+	ToMega           bool     `json:"mega"`           // whether to upload to mega or not
+	ExcludeMounts    bool     `json:"exclude-mounts"` // whether to exclude mounts [default: false]
+	RcloneDest       string   `json:"rclone-dest"`    // dest:path of rclone config
+	ExcludeDirs      []string `json:"exclude-dirs"`   // directories on server to not backup
+	RootDir          string   `json:"root-dir"`       // root directory to backup - useful when mounting fs to backup
 }
 
 type ServerEntry struct{ Server }
@@ -124,6 +125,10 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 
 func getRsyncCmds(server Server, excludeDirs []string, backupDir string) []string {
 	args := []string{"-aAX", "--numeric-ids", "--delete"}
+
+	if server.ExcludeMounts {
+		args = append(args, "-x")
+	}
 
 	for _, dir := range server.ExcludeDirs {
 		// server excludes
