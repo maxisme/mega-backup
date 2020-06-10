@@ -76,7 +76,7 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 			}
 
 			// encrypt and compress directory
-			compressedDirPath := TmpDir + name + EncryptionFileType
+			compressedDirPath := TmpDir + name + "_" + string(time.Now().Unix()) + EncryptionFileType
 			if err := EncryptCompressDir(backupDir, compressedDirPath, servers.Key); err != nil {
 				log.Println("Error encrypting/compressing: " + err.Error())
 				return
