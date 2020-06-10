@@ -42,6 +42,7 @@ type ServersConfig struct {
 	Servers     map[ServerName]ServerEntry `json:"servers"`
 	ExcludeDirs []string                   `json:"exclude-dirs"`   // directories on ALL servers to not backup
 	Key         string                     `json:"encryption-key"` // key to encrypt the compressed server with
+	PostCmd     string                     `json:"post-cmd"`       // command to be executed after backup
 }
 
 const (
@@ -121,6 +122,14 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 		}(servers, name, serverEntry.Server)
 	}
 	wg.Wait()
+
+	if servers.PostCmd != "" {
+		//  run command
+		c := exec.Command("/bin/sh", "-c", servers.PostCmd)
+		log.Println("Running: " + c.String())
+		out, err := c.CombinedOutput()
+		log.Printf("Ran final command '%s'\n%v\n%v\n", servers.PostCmd, out, err)
+	}
 }
 
 func getRsyncCmds(server Server, excludeDirs []string, backupDir string) []string {
