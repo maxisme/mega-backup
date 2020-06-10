@@ -23,7 +23,7 @@ func Hash(key string) string {
 
 func Encrypt(data []byte, key string) ([]byte, error) {
 	if key == "" {
-		panic("must enter key")
+		return nil, fmt.Errorf("must enter key")
 	}
 	block, _ := aes.NewCipher([]byte(Hash(key)))
 	gcm, err := cipher.NewGCM(block)
@@ -58,7 +58,7 @@ func Decrypt(data []byte, key string) ([]byte, error) {
 
 func Tar(src string, writer io.Writer) error {
 	if _, err := os.Stat(src); err != nil {
-		return fmt.Errorf("Unable to tar files - %v", err.Error())
+		return fmt.Errorf("unable to tar files - %v", err.Error())
 	}
 
 	gzw, _ := gzip.NewWriterLevel(writer, gzip.BestSpeed)
@@ -98,16 +98,6 @@ func Tar(src string, writer io.Writer) error {
 
 		return nil
 	})
-}
-
-func RequiredEnvs(envKeys []string) error {
-	for _, envKey := range envKeys {
-		envValue := os.Getenv(envKey)
-		if envValue == "" {
-			return fmt.Errorf("missing env variable: '%s'", envKey)
-		}
-	}
-	return nil
 }
 
 func WriteFile(bytes []byte, out string) error {
