@@ -155,11 +155,11 @@ func EncryptCompressDir(dir, out, key string) error {
 }
 
 func DecryptTar(path, out, key string) error {
-	bytes, err := ioutil.ReadFile(path)
+	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	decryptedBytes, err := Decrypt(bytes, key)
+	decryptedBytes, err := Decrypt(b, key)
 	if err != nil {
 		return err
 	}
