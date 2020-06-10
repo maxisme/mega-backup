@@ -66,6 +66,5 @@ func FileToServers(path string) (servers backup.ServersConfig, err error) {
 		err = fmt.Errorf("server key in config must be more than %d chars", minKeyLen)
 		return
 	}
-	log.Printf("%v", servers)
 	return
 }
