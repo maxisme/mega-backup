@@ -131,12 +131,8 @@ func getRsyncCmds(server Server, excludeDirs []string, backupDir string) []strin
 	}
 
 	// destination rsync cmds
-	if server.Host == "" {
-		args = append(args, "/", backupDir)
-	} else {
-		args = append(args, "-e", fmt.Sprintf("ssh -p %d", server.Port))
-		args = append(args, fmt.Sprintf("%s:/", server.Host), backupDir)
-	}
+	args = append(args, "-e", fmt.Sprintf("ssh -p %d", server.Port))
+	args = append(args, fmt.Sprintf("%s:/", server.Host), backupDir)
 
 	return args
 }
