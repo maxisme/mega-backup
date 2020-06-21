@@ -1,13 +1,17 @@
 package backup
 
 import (
+	"bufio"
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"sync"
 	"time"
@@ -51,7 +55,7 @@ const (
 )
 
 // BackupServers will backup the servers from the file in the config
-func BackupServers(servers ServersConfig, MCServer CreateServer) {
+func BackupServers(servers ServersConfig) {
 	var wg sync.WaitGroup
 	wg.Add(len(servers.Servers))
 	for name, serverEntry := range servers.Servers {
@@ -87,14 +91,19 @@ func BackupServers(servers ServersConfig, MCServer CreateServer) {
 			}
 
 			if server.ToMega {
+				MegaServer := CreateServer{
+					Host:        os.Getenv("HOST"),
+					Credentials: os.Getenv("CREDENTIALS"),
+				}
+
 				log.Println("Uploading to MEGA")
 				// backup directory to mega
-				account, err := MCServer.getStoredAccount()
+				account, err := MegaServer.getStoredAccount()
 				if err != nil {
 					log.Println(err.Error())
 					return
 				}
-				link, err := MCServer.BackupPathToMega(compressedDirPath, account)
+				link, err := MegaServer.BackupPathToMega(compressedDirPath, account)
 				if err != nil {
 					log.Println(err.Error())
 					return
@@ -162,15 +171,31 @@ func getRsyncCmds(server Server, excludeDirs []string, backupDir string) []strin
 	return args
 }
 
+func TempFileName() string {
+	randBytes := make([]byte, 16)
+	rand.Read(randBytes)
+	return filepath.Join(os.TempDir(), hex.EncodeToString(randBytes))
+}
+
 func EncryptCompressDir(dir, out, key string) error {
-	var buf bytes.Buffer
+	f, err := os.Create(TempFileName())
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
 	log.Printf("Taring %s\n", dir)
-	if err := Tar(dir, &buf); err != nil {
+	w := bufio.NewWriter(f)
+	if err := Tar(dir, w); err != nil {
 		return err
 	}
 
 	log.Printf("Encrypting %s\n", dir)
-	encryptedBytes, err := Encrypt(buf.Bytes(), key)
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+	encryptedBytes, err := Encrypt(b, key)
 	if err != nil {
 		return err
 	}

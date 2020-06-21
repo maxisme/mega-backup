@@ -3,3 +3,5 @@
 servers.json
 mega_test.go
 docker-compose.yml
+/backup/file.tar.gz.encr
+/backup/unencrypted.tar.gz

@@ -36,10 +36,7 @@ func main() {
 				panic(err)
 			}
 
-			backup.BackupServers(servers, backup.CreateServer{
-				Host:        os.Getenv("HOST"),
-				Credentials: os.Getenv("CREDENTIALS"),
-			})
+			backup.BackupServers(servers)
 
 			mutex.Lock()
 			isBackingUp = false

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/maxisme/mega-backup/backup"
 	"os"
 	"path/filepath"
 	"strings"
