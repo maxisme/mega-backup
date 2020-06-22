@@ -182,8 +182,11 @@ func EncryptCompressDir(dir, out, key string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	defer os.Remove(f.Name())
+
+	defer func() {
+		fmt.Println(f.Close())
+		fmt.Println(os.Remove(f.Name()))
+	}()
 
 	log.Printf("Taring %s\n", dir)
 	w := bufio.NewWriter(f)
